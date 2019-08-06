@@ -19,13 +19,13 @@ class TicTacToe:
     def play(self):
         while True:
             move = input("Player1: ").split(",")
-            ttt.move(int(move[0]), int(move[1]), 'X')
+            ttt.move(int(move[0]), int(move[1]), self.player1)
             if self.checkEnd():
                 print()
                 print("Player1 won")
                 break
             move = input("Player2: ").split(",")
-            ttt.move(int(move[0]), int(move[1]), 'O')
+            ttt.move(int(move[0]), int(move[1]), self.player2)
             if self.checkEnd():
                 print()
                 print("Player2 won")
@@ -50,6 +50,6 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    ttt = TicTacToe(1,0)
+    ttt = TicTacToe('X','O')
     ttt.play()
     
