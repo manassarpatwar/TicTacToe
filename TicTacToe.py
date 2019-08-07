@@ -1,17 +1,19 @@
 import numpy as np
 from math import floor
-from tkinter import Tk, Canvas
+from tkinter import Tk, Canvas, Text, INSERT, Frame
 
 class TicTacToe:
 
-    def __init__(self, players, board_size):
+    def __init__(self, players, board_size, font_size):
         self.board = np.zeros((board_size, board_size), dtype=str)
         self.printBoard()
         self.players = players
         self.player_index = 0
         self.game_end = False
+        self.font_size = font_size
 
         root = Tk()
+        self.master = root
         self.board_size = board_size
         self.initGUI(root)
         root.mainloop()
@@ -22,22 +24,26 @@ class TicTacToe:
         self.line_thickness = 5
 
         master.title("PyTicTacToe")
-        master.resizable(False, False)  # This code helps to disable masterdows from resizing
+        master.resizable(False, False)
 
-        masterdow_height = 500
-        masterdow_width = 500
+        self.masterdow_height = 500
+        self.masterdow_width = 1000
 
         screen_width = master.winfo_screenwidth()
         screen_height = master.winfo_screenheight()
 
-        x_cordinate = int((screen_width / 2) - (masterdow_width / 2))
-        y_cordinate = int((screen_height / 2) - (masterdow_height / 2))
+        x_cordinate = int((screen_width / 2) - (self.masterdow_width / 2))
+        y_cordinate = int((screen_height / 2) - (self.masterdow_height / 2))
 
-        master.geometry("{}x{}+{}+{}".format(masterdow_width, masterdow_height, x_cordinate, y_cordinate))
+        master.geometry("{}x{}+{}+{}".format(self.masterdow_width, self.masterdow_height, x_cordinate, y_cordinate))
 
+
+        self.f = Frame(master)
+        self.f.place(relx = 0.5, rely = 0.5, anchor = "w")
+        self.t = Text(self.f, width=40, height=1, font=("Helvetica", 32))
         self.c = Canvas(master, height=self.canvas_height, width=self.canvas_width, bg="grey", bd = 0)
         master.bind("<Button 1>", self.getorigin)
-        self.c.pack()
+        self.c.place(relx = 0.5, rely = 0.5, anchor = "e")
 
         self.drawBoard()
 
@@ -65,14 +71,15 @@ class TicTacToe:
             self.game_end = True
 
         if self.game_end:
-            self.c.delete("all")
-            self.c.create_text(self.canvas_width / 2, self.canvas_height/2,
-                           fill="black", font="Helvetica 40 bold", text=self.player+" won the Game!")
-        
-        if not '' in set(self.board.flatten()):
-            self.c.delete("all")
-            self.c.create_text(self.canvas_width / 2, self.canvas_height / 2,
-                               fill="black", font="Helvetica 40 bold", text="The game is Tied")
+            self.t.configure(state='normal')
+            self.t.insert(INSERT, "      {} won the Game!".format(self.player))
+            self.t.configure(state='disabled')
+            self.t.pack()
+        elif not '' in set(self.board.flatten()):
+            self.t.configure(state='normal')
+            self.t.insert(INSERT, "        The game is Tied")
+            self.t.configure(state='disabled')
+            self.t.pack()
 
 
     def getorigin(self, eventorigin):
@@ -85,7 +92,7 @@ class TicTacToe:
 
     def play(self, x, y):
         x, y = self.getBox(x, y)
-        if self.board[x][y] == '' and x < self.board_size and y < self.board_size:
+        if x < self.board_size and y < self.board_size and self.board[x][y] == '':
             self.player = self.players[self.player_index]
             self.move(x, y, self.player)
             self.drawMove(x, y, self.player)
@@ -110,9 +117,8 @@ class TicTacToe:
         print('Drawing move')
         self.c.create_text(y*self.canvas_width/self.board_size+self.canvas_width/(2*self.board_size),
                            x*self.canvas_height/self.board_size+self.canvas_width/(2*self.board_size),
-                           fill="black", font="Helvetica 100 bold", text=player)
+                           fill="black", font="Helvetica {} bold".format(self.font_size), text=player)
 
 if __name__ == "__main__":
-    ttt = TicTacToe(players = ['X','O'], board_size=5)
+    ttt = TicTacToe(players = ['X','O'], board_size=3, font_size = 100)
 
-    
