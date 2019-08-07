@@ -1,6 +1,6 @@
 import numpy as np
 from math import floor
-from tkinter import Tk, Canvas, Text, INSERT, Frame
+from tkinter import Tk, Canvas, Text, INSERT, Frame, Button, ttk, END
 
 class TicTacToe:
 
@@ -41,6 +41,7 @@ class TicTacToe:
         self.f = Frame(master)
         self.f.place(relx = 0.5, rely = 0.5, anchor = "w")
         self.t = Text(self.f, width=40, height=1, font=("Helvetica", 32))
+        self.b = ttk.Button(self.f, text='Play again', width=15, command=lambda: self.reset())
         self.c = Canvas(master, height=self.canvas_height, width=self.canvas_width, bg="grey", bd = 0)
         master.bind("<Button 1>", self.getorigin)
         self.c.place(relx = 0.5, rely = 0.5, anchor = "e")
@@ -75,12 +76,24 @@ class TicTacToe:
             self.t.insert(INSERT, "      {} won the Game!".format(self.player))
             self.t.configure(state='disabled')
             self.t.pack()
+            self.b.pack()
+
         elif not '' in set(self.board.flatten()):
             self.t.configure(state='normal')
             self.t.insert(INSERT, "        The game is Tied")
             self.t.configure(state='disabled')
             self.t.pack()
+            self.b.pack()
 
+    def reset(self):
+        self.board = np.zeros((self.board_size, self.board_size), dtype=str)
+        self.c.delete("all")
+        self.drawBoard()
+        self.t.configure(state='normal')
+        self.t.delete(1.0,END)
+        self.t.configure(state='disabled')
+        self.b.pack_forget()
+        self.game_end = False
 
     def getorigin(self, eventorigin):
         if not self.game_end:
